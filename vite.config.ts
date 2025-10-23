@@ -9,5 +9,6 @@ export default defineConfig({
         plugins: [['babel-plugin-react-compiler']],
       },
     }),
-  ],
+  ], 
+  base: '/yaml-to-excel-for-moodale/',
 })

@@ -12,6 +12,9 @@ type UserRecord = {
 
 const YamlToExcelConverter: React.FC = () => {
   const [yamlData, setYamlData] = useState<UserRecord[] | null>(null);
+  const [booktype, setBooktype] = useState<XLSX.BookType>('csv')
+
+  const booktypeList: XLSX.BookType[] = ['csv','xlsb','xls','xla','xlsm','xlsx']
 
   // Загружаем YAML-файл
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,11 +54,11 @@ const YamlToExcelConverter: React.FC = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
 
     // Генерируем Excel и сохраняем
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, { bookType: booktype, type: "array" });
     const blob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, "users.xlsx");
+    saveAs(blob, `users.${booktype}`);
   };
 
   return (
@@ -66,9 +69,18 @@ const YamlToExcelConverter: React.FC = () => {
         type="file"
         accept=".yml,.yaml"
         onChange={handleFileUpload}
-        className="border border-gray-300 rounded p-2"
+        style={{marginRight: 40}}
       />
-
+      <span>
+        Формат
+      <select value={booktype}
+      
+        onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+          setBooktype(event.target.value as XLSX.BookType);
+        }}>
+          {booktypeList.map((i)=>( <option value={i}>{i}</option>))}
+      </select>
+      </span>
       <button
         onClick={handleExportToExcel}
         className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
